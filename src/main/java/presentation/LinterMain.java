@@ -1,7 +1,6 @@
 package presentation;
 
 import datastorage.FileLoader;
-import datastorage.LinterLoader;
 import domain.ExampleLinter2;
 import domain.Linter;
 import domain.SnakeLinter;
@@ -15,13 +14,11 @@ public class LinterMain {
     private final Scanner scanner;
     private final List<Linter> availableLinters;
     private final FileLoader fileLoader;
-    private final LinterLoader linterLoader;
 
     public LinterMain() {
         this.scanner = new Scanner(System.in);
         this.availableLinters = new ArrayList<>();
         this.fileLoader = new FileLoader();
-        this.linterLoader = new LinterLoader();
     }
 
     public static void main(String[] args) {
@@ -46,7 +43,6 @@ public class LinterMain {
             return;
         }
 
-        maybeLoadExternalLinter();
         String result = callLinters(availableLinters, files);
         displayResult(result);
     }
@@ -57,23 +53,6 @@ public class LinterMain {
         System.out.println("Use comma-separated paths for multiple files.");
         System.out.print("> ");
         return scanner.nextLine();
-    }
-
-    private void maybeLoadExternalLinter() {
-        System.out.println();
-        System.out.print("Optional: enter a fully-qualified linter class name to load, or press Enter to skip: ");
-        String className = scanner.nextLine();
-        if (className == null || className.trim().isEmpty()) {
-            return;
-        }
-
-        try {
-            Linter loadedLinter = linterLoader.loadLinter(className.trim());
-            availableLinters.add(loadedLinter);
-            System.out.println("Loaded: " + className.trim());
-        } catch (IllegalArgumentException ex) {
-            System.out.println("Could not load custom linter. Continuing with built-in linters.");
-        }
     }
 
     private String callLinters(List<Linter> linters, List<File> files) {

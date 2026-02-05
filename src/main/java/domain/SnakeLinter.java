@@ -29,7 +29,7 @@ public class SnakeLinter implements Linter {
             if (!linesWithTrailingWhitespace.isEmpty()) {
                 violationCount += linesWithTrailingWhitespace.size();
                 result.append("File: ").append(file.getPath()).append(System.lineSeparator());
-                result.append("  Trailing whitespace found on line(s): ");
+                result.append("Trailing whitespace found on line(s): ");
                 for (int i = 0; i < linesWithTrailingWhitespace.size(); i++) {
                     result.append(linesWithTrailingWhitespace.get(i));
                     if (i < linesWithTrailingWhitespace.size() - 1) {
