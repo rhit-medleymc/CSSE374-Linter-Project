@@ -1,5 +1,5 @@
 package example;
 
-public class newClass {
+public class testing {
     
 }
