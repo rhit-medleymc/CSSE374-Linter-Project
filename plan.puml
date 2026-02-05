@@ -42,16 +42,11 @@
         }
     }
 
-    package Tests{
-        class PublicNonFinalFieldLinterTest{
-            +detectsPublicNonFinalFields(): void
-        }
-    }
-
+ 
     LinterMain ->"*" Linter
     LinterMain -d-> FileLoader
     LinterMain -d-> LinterLoader
-    PublicNonFinalFieldLinterTest --> PublicNonFinalFieldLinter
+   
 
 
     @enduml
