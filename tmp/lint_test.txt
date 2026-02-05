@@ -1,3 +1,0 @@
-good line
-bad line   
-tab bad 

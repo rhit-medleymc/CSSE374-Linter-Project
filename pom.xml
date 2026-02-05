@@ -64,7 +64,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>presentation.LinterMain</mainClass>
+							<mainClass><!--CHANGE ME WHEN YOU HAVE A MAIN CLASS--></mainClass>
 						</manifest>
 					</archive>
 				</configuration>
