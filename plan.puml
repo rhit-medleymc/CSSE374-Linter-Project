@@ -12,6 +12,10 @@
         class ExampleLinter2 implements Linter{
         }
 
+        class PublicNonFinalFieldLinter implements Linter{
+            +Lint(files: List<File>): String
+        }
+
 
     }
 
@@ -38,10 +42,16 @@
         }
     }
 
+    package Tests{
+        class PublicNonFinalFieldLinterTest{
+            +detectsPublicNonFinalFields(): void
+        }
+    }
 
     LinterMain ->"*" Linter
     LinterMain -d-> FileLoader
     LinterMain -d-> LinterLoader
+    PublicNonFinalFieldLinterTest --> PublicNonFinalFieldLinter
 
 
     @enduml

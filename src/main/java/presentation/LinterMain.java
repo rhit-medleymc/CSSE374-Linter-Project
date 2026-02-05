@@ -3,6 +3,7 @@ package presentation;
 import datastorage.FileLoader;
 import domain.ExampleLinter2;
 import domain.Linter;
+import domain.PublicNonFinalFieldLinter;
 import domain.SnakeLinter;
 
 import java.io.File;
@@ -29,6 +30,7 @@ public class LinterMain {
         availableLinters.clear();
         availableLinters.add(new SnakeLinter());
         availableLinters.add(new ExampleLinter2());
+        availableLinters.add(new PublicNonFinalFieldLinter());
     }
 
     public void run() {
