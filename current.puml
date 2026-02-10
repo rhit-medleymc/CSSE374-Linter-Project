@@ -21,8 +21,13 @@ package domain{
   }
 
   class PublicNonFinalFieldLinter implements Linter{
-            +Lint(files: List<File>): String
-        }
+    +lint(files: List<File>): String
+    -lintClassFile(file: File, result: StringBuilder): int
+    -lintJavaSource(file: File, result: StringBuilder): int
+    -extractFieldNames(statement: String): List<String>
+    -isPublicNonFinalFieldDeclaration(statement: String): boolean
+    -stripComments(line: String, inBlockComment: boolean[]): String
+  }
 
   class ExampleLinter2 {
     +lint(files: List<File>): String
