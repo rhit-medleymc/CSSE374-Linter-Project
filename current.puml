@@ -20,6 +20,10 @@ package domain{
     -hasTrailingWhitespace(line: String): boolean
   }
 
+  class PublicNonFinalFieldLinter implements Linter{
+            +Lint(files: List<File>): String
+        }
+
   class ExampleLinter2 {
     +lint(files: List<File>): String
   }
