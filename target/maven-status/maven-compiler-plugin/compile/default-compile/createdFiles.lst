@@ -1,0 +1,9 @@
+domain\PublicNonFinalFieldLinter.class
+example\MyFirstLinter.class
+datastorage\BytecodeReader.class
+domain\Linter.class
+domain\ExampleLinter2.class
+datastorage\FileLoader.class
+example\testing.class
+presentation\LinterMain.class
+domain\SnakeLinter.class
