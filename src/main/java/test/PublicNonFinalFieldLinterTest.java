@@ -1,7 +1,9 @@
-package domain;
+package test;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import domain.PublicNonFinalFieldLinter;
 
 import java.io.File;
 import java.io.IOException;

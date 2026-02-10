@@ -8,8 +8,10 @@ import java.util.Scanner;
 import datastorage.FileLoader;
 import domain.ExampleLinter2;
 import domain.Linter;
+import domain.PlantUMLGenerator;
 import domain.PublicNonFinalFieldLinter;
 import domain.SnakeLinter;
+import domain.TrailingWhitespaceLinter;
 
 public class LinterMain {
     private final List<Linter> availableLinters;
@@ -29,8 +31,9 @@ public class LinterMain {
     public void loadLinters() {
         availableLinters.clear();
         availableLinters.add(new SnakeLinter());
-        availableLinters.add(new ExampleLinter2());
+        availableLinters.add(new TrailingWhitespaceLinter());
         availableLinters.add(new PublicNonFinalFieldLinter());
+        availableLinters.add(new PlantUMLGenerator());
     }
 
     public void run() {
