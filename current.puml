@@ -33,6 +33,16 @@ package domain{
     +lint(files: List<File>): String
   }
 
+  class TooManyParametersLinter implements Linter{
+    +lint(files: List<File>): String
+    -lintClassFile(file: File, result: StringBuilder): int
+    -lintJavaSource(file: File, result: StringBuilder): int
+    -countParameters(params: String): int
+    -looksLikeMethodOrCtorStart(line: String): boolean
+    -extractMethodOrCtorName(signature: String): String
+    -stripComments(line: String, inBlockComment: boolean[]): String
+  }
+
   interface Linter {
     lint(files: List<File>): String
   }
@@ -56,6 +66,7 @@ package presentation{
 
 SnakeLinter ..|> Linter
 ExampleLinter2 ..|> Linter
+TooManyParametersLinter ..|> Linter
 LinterMain o-- Linter
 LinterMain *-- FileLoader
 @enduml
