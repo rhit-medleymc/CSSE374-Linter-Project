@@ -122,3 +122,7 @@ Temporary Items
 
 /target/
 *.class
+
+
+target/
+.m2repo/
