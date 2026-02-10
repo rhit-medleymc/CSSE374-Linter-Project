@@ -86,7 +86,7 @@ public class PublicNonFinalFieldLinter implements Linter {
 
         for (int i = 0; i < lines.size(); i++) {
             boolean[] inBlockState = new boolean[]{inBlockComment};
-            String cleaned = stripComments(lines.get(i), inBlockState);
+            String cleaned = removeComments(lines.get(i), inBlockState);
             inBlockComment = inBlockState[0];
 
             if (cleaned.trim().isEmpty()) {
@@ -110,7 +110,7 @@ public class PublicNonFinalFieldLinter implements Linter {
                 String oneStatement = current.substring(0, idx).trim();
                 if (!oneStatement.isEmpty()) {
                     if (isPublicNonFinalFieldDeclaration(oneStatement)) {
-                        List<String> fieldNames = extractFieldNames(oneStatement);
+                        List<String> fieldNames = extractName(oneStatement);
                         if (count == 0) {
                             result.append("File: ").append(file.getPath()).append(System.lineSeparator());
                         }
@@ -143,7 +143,7 @@ public class PublicNonFinalFieldLinter implements Linter {
         return count;
     }
 
-    private List<String> extractFieldNames(String statement) {
+    private List<String> extractName(String statement) {
         String normalized = statement.replaceAll("\\s+", " ").trim();
 
         while (normalized.startsWith("@")) {
@@ -215,7 +215,7 @@ public class PublicNonFinalFieldLinter implements Linter {
         return statement.matches(".*\\bpublic\\b.*\\b[A-Za-z_$][\\w$]*\\b.*");
     }
 
-    private String stripComments(String line, boolean[] inBlockComment) {
+    private String removeComments(String line, boolean[] inBlockComment) {
         StringBuilder sb = new StringBuilder();
         boolean inBlock = inBlockComment[0];
         for (int i = 0; i < line.length(); i++) {

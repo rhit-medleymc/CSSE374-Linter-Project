@@ -80,7 +80,7 @@ public class TooManyParametersLinter implements Linter {
 
         for (int i = 0; i < lines.size(); i++) {
             boolean[] inBlockState = new boolean[]{inBlockComment};
-            String cleaned = stripComments(lines.get(i), inBlockState);
+            String cleaned = removeComments(lines.get(i), inBlockState);
             inBlockComment = inBlockState[0];
 
             if (cleaned.trim().isEmpty()) {
@@ -88,7 +88,7 @@ public class TooManyParametersLinter implements Linter {
             }
 
             if (!inSignature) {
-                if (looksLikeMethodOrCtorStart(cleaned)) {
+                if (looksLike(cleaned)) {
                     inSignature = true;
                     signature.setLength(0);
                     signatureStartLine = i + 1;
@@ -111,7 +111,7 @@ public class TooManyParametersLinter implements Linter {
                             result.append("File: ").append(file.getPath()).append(System.lineSeparator());
                         }
                         count++;
-                        String name = extractMethodOrCtorName(sig);
+                        String name = extractName(sig);
                         result.append("  Line ").append(signatureStartLine)
                                 .append(": '").append(name)
                                 .append("' has ").append(paramCount)
@@ -156,7 +156,7 @@ public class TooManyParametersLinter implements Linter {
         return count;
     }
 
-    private boolean looksLikeMethodOrCtorStart(String line) {
+    private boolean looksLike(String line) {
         String trimmed = line.trim();
         if (trimmed.startsWith("if ") || trimmed.startsWith("for ")
                 || trimmed.startsWith("while ") || trimmed.startsWith("switch ")) {
@@ -168,7 +168,7 @@ public class TooManyParametersLinter implements Linter {
         return trimmed.contains("(");
     }
 
-    private String extractMethodOrCtorName(String signature) {
+    private String extractName(String signature) {
         int openIdx = signature.indexOf('(');
         if (openIdx < 0) {
             return "unknown";
@@ -181,7 +181,7 @@ public class TooManyParametersLinter implements Linter {
         return tokens[tokens.length - 1];
     }
 
-    private String stripComments(String line, boolean[] inBlockComment) {
+    private String removeComments(String line, boolean[] inBlockComment) {
         StringBuilder sb = new StringBuilder();
         boolean inBlock = inBlockComment[0];
         for (int i = 0; i < line.length(); i++) {
