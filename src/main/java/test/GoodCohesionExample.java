@@ -1,4 +1,4 @@
-package example;
+package test;
 
 /**
  * Perfect cohesion - all methods work on the same field(s)

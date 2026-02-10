@@ -15,7 +15,7 @@ import org.objectweb.asm.tree.MethodNode;
  * Data layer class responsible for reading and parsing Java bytecode files
  * using ASM.
  */
-public class BytecodeReader {
+public class ASMReader {
 
     /**
      * Reads a .class file and returns an ASM ClassNode for analysis.

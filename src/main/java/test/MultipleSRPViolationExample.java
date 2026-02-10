@@ -1,4 +1,4 @@
-package example;
+package test;
 
 /**
  * Example class with SEVERE SRP violation (LCOM >= 3).

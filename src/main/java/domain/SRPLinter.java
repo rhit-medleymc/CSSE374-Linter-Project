@@ -1,6 +1,6 @@
 package domain;
 
-import datastorage.BytecodeReader;
+import datastorage.ASMReader;
 import org.objectweb.asm.tree.ClassNode;
 
 import java.io.File;
@@ -19,18 +19,18 @@ public class SRPLinter implements Linter {
 
     private static final int DEFAULT_LCOM_THRESHOLD = 2;
     private final int lcomThreshold;
-    private final BytecodeReader bytecodeReader;
+    private final ASMReader ASMReader;
     private final LCOMCalculator lcomCalculator;
 
     /**
      * Creates an SRP linter with default LCOM threshold of 2.
      * Dependencies are injected to follow Dependency Inversion Principle.
      * 
-     * @param bytecodeReader the bytecode reader for loading class files
+     * @param ASMReader the bytecode reader for loading class files
      * @param lcomCalculator the LCOM calculator for cohesion analysis
      */
-    public SRPLinter(BytecodeReader bytecodeReader, LCOMCalculator lcomCalculator) {
-        this(DEFAULT_LCOM_THRESHOLD, bytecodeReader, lcomCalculator);
+    public SRPLinter(ASMReader ASMReader, LCOMCalculator lcomCalculator) {
+        this(DEFAULT_LCOM_THRESHOLD, ASMReader, lcomCalculator);
     }
 
     /**
@@ -39,12 +39,12 @@ public class SRPLinter implements Linter {
      * 
      * @param lcomThreshold  minimum LCOM score to flag as violation (typically 2 or
      *                       higher)
-     * @param bytecodeReader the bytecode reader for loading class files
+     * @param ASMReader the bytecode reader for loading class files
      * @param lcomCalculator the LCOM calculator for cohesion analysis
      */
-    public SRPLinter(int lcomThreshold, BytecodeReader bytecodeReader, LCOMCalculator lcomCalculator) {
+    public SRPLinter(int lcomThreshold, ASMReader ASMReader, LCOMCalculator lcomCalculator) {
         this.lcomThreshold = lcomThreshold;
-        this.bytecodeReader = bytecodeReader;
+        this.ASMReader = ASMReader;
         this.lcomCalculator = lcomCalculator;
     }
 
@@ -55,7 +55,7 @@ public class SRPLinter implements Linter {
         int totalClasses = 0;
 
         try {
-            List<ClassNode> classes = bytecodeReader.getClasses(files);
+            List<ClassNode> classes = ASMReader.getClasses(files);
 
             for (ClassNode classNode : classes) {
                 // Skip interfaces, enums, and anonymous classes
