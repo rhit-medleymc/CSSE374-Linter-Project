@@ -29,7 +29,7 @@ package domain{
   }
 
   interface Linter {
-    ~lint(files: List<File>): String
+    lint(files: List<File>): String
   }
 }
 
