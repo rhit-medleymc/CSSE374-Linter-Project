@@ -4,6 +4,7 @@ import datastorage.FileLoader;
 import domain.ExampleLinter2;
 import domain.Linter;
 import domain.PublicNonFinalFieldLinter;
+import domain.SRPLinter;
 import domain.SnakeLinter;
 
 import java.io.File;
@@ -28,9 +29,18 @@ public class LinterMain {
 
     public void loadLinters() {
         availableLinters.clear();
+
+        // Create data layer dependencies (shared across linters if needed)
+        datastorage.BytecodeReader bytecodeReader = new datastorage.BytecodeReader();
+
+        // Create domain layer utilities
+        domain.LCOMCalculator lcomCalculator = new domain.LCOMCalculator();
+
+        // Add linters with dependency injection
         availableLinters.add(new SnakeLinter());
         availableLinters.add(new ExampleLinter2());
         availableLinters.add(new PublicNonFinalFieldLinter());
+        availableLinters.add(new SRPLinter(bytecodeReader, lcomCalculator));
     }
 
     public void run() {

@@ -1,0 +1,16 @@
+domain\LCOMCalculator$1UnionFind.class
+datastorage\BytecodeReader.class
+domain\ExampleLinter2.class
+domain\LCOMCalculator.class
+domain\SnakeLinter.class
+domain\PublicNonFinalFieldLinter.class
+domain\SRPLinter.class
+example\GoodCohesionExample.class
+example\MyFirstLinter.class
+domain\Linter.class
+example\SRPViolationExample.class
+datastorage\FileLoader.class
+example\MultipleSRPViolationExample.class
+example\testing.class
+presentation\LinterMain.class
+domain\LCOMCalculator$LCOMResult.class
