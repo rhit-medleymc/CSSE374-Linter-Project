@@ -1,0 +1,146 @@
+@startuml SRP_Linter_Architecture
+
+' Styling
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+
+' Layer packages
+package "Presentation Layer" <<Rectangle>> #E8F5E9 {
+    class LinterMain {
+        - scanner: Scanner
+        - availableLinters: List<Linter>
+        - fileLoader: FileLoader
+        + main(args: String[]): void
+        + loadLinters(): void
+        + run(): void
+        - askForFileInput(): String
+        - callLinters(linters, files): String
+        + displayResult(result: String): void
+    }
+}
+
+package "Domain Layer" <<Rectangle>> #E3F2FD {
+    interface Linter {
+        + lint(files: List<File>): String
+    }
+    
+    class SRPLinter {
+        - DEFAULT_LCOM_THRESHOLD: int = 2
+        - lcomThreshold: int
+        - bytecodeReader: BytecodeReader
+        - lcomCalculator: LCOMCalculator
+        + SRPLinter(bytecodeReader, lcomCalculator)
+        + SRPLinter(threshold, bytecodeReader, lcomCalculator)
+        + lint(files: List<File>): String
+        - isSkippableClass(classNode): boolean
+        - appendViolation(result, classNode, lcomResult): void
+        - formatMethodList(methods): String
+    }
+    
+    class LCOMCalculator {
+        + calculateLCOM(classNode: ClassNode): LCOMResult
+        - getInstanceMethods(classNode): List<MethodNode>
+        - getInstanceFields(classNode): List<FieldNode>
+        - buildMethodFieldAccessMap(...): Map
+        - findConnectedComponents(...): List<Set<String>>
+    }
+    
+    class "LCOMCalculator.LCOMResult" as LCOMResult {
+        - className: String
+        - lcomScore: int
+        - methodCount: int
+        - fieldCount: int
+        - components: List<Set<String>>
+        + getLcomScore(): int
+        + getMethodCount(): int
+        + getFieldCount(): int
+        + getComponents(): List<Set<String>>
+        + hasLowCohesion(threshold: int): boolean
+    }
+    
+    class PublicNonFinalFieldLinter {
+        + lint(files: List<File>): String
+        - lintClassFile(file, result): int
+        - lintJavaSource(file, result): int
+    }
+    
+    class SnakeLinter {
+        + lint(files: List<File>): String
+    }
+    
+    class ExampleLinter2 {
+        + lint(files: List<File>): String
+    }
+}
+
+package "Data Layer" <<Rectangle>> #FFF3E0 {
+    class BytecodeReader {
+        + readClassFile(classFile: File): ClassNode
+        + getFields(classFile: File): List<FieldNode>
+        + getMethods(classFile: File): List<MethodNode>
+        + getClasses(files: List<File>): List<ClassNode>
+        + getAllMethods(files: List<File>): List<MethodNode>
+        - recurseFiles(file, classes): void
+    }
+    
+    class FileLoader {
+        - file: File
+        + loadFiles(input: String): List<File>
+        + getFile(): File
+    }
+}
+
+' Relationships - Interface Implementation
+Linter <|.. SRPLinter
+Linter <|.. PublicNonFinalFieldLinter
+Linter <|.. SnakeLinter
+Linter <|.. ExampleLinter2
+
+' Relationships - Composition/Aggregation
+LinterMain o-- FileLoader : uses
+LinterMain o-- Linter : manages
+
+SRPLinter *-- BytecodeReader : injected
+SRPLinter *-- LCOMCalculator : injected
+LCOMCalculator +-- LCOMResult : creates
+
+' Relationships - Dependencies
+SRPLinter ..> LCOMResult : uses
+LCOMCalculator ..> "ASM ClassNode" : analyzes
+
+' Layer dependencies
+LinterMain ..> BytecodeReader : creates
+LinterMain ..> LCOMCalculator : creates
+
+' Notes
+note right of SRPLinter
+  **Dependency Injection**
+  Dependencies are injected
+  via constructor (follows DIP)
+end note
+
+note bottom of LinterMain
+  **Presentation Layer**
+  Responsible for:
+  - User I/O
+  - Dependency creation
+  - Wiring components
+end note
+
+note bottom of BytecodeReader
+  **Data Layer**
+  Responsible for:
+  - File I/O
+  - Bytecode reading
+  - ASM interaction
+end note
+
+note top of LCOMCalculator
+  **LCOM4 Algorithm**
+  Uses Union-Find to detect
+  connected components in
+  method-field dependency graph
+end note
+
+@enduml

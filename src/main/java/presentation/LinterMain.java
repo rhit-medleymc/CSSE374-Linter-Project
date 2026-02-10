@@ -10,6 +10,7 @@ import domain.ExampleLinter2;
 import domain.Linter;
 import domain.PlantUMLGenerator;
 import domain.PublicNonFinalFieldLinter;
+import domain.SRPLinter;
 import domain.SnakeLinter;
 import domain.TrailingWhitespaceLinter;
 
@@ -30,9 +31,18 @@ public class LinterMain {
 
     public void loadLinters() {
         availableLinters.clear();
+
+        // Create data layer dependencies (shared across linters if needed)
+        datastorage.BytecodeReader bytecodeReader = new datastorage.BytecodeReader();
+
+        // Create domain layer utilities
+        domain.LCOMCalculator lcomCalculator = new domain.LCOMCalculator();
+
+        // Add linters with dependency injection
         availableLinters.add(new SnakeLinter());
         availableLinters.add(new TrailingWhitespaceLinter());
         availableLinters.add(new PublicNonFinalFieldLinter());
+        availableLinters.add(new SRPLinter(bytecodeReader, lcomCalculator));
         availableLinters.add(new PlantUMLGenerator());
     }
 
