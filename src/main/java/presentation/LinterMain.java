@@ -11,6 +11,7 @@ import domain.Linter;
 import domain.PublicNonFinalFieldLinter;
 import domain.SRPLinter;
 import domain.SnakeLinter;
+import domain.TooManyParametersLinter;
 
 public class LinterMain {
     private final List<Linter> availableLinters;
@@ -41,6 +42,7 @@ public class LinterMain {
         availableLinters.add(new ExampleLinter2());
         availableLinters.add(new PublicNonFinalFieldLinter());
         availableLinters.add(new SRPLinter(bytecodeReader, lcomCalculator));
+        availableLinters.add(new TooManyParametersLinter());
     }
 
     public void run() {

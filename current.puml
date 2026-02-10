@@ -69,4 +69,5 @@ ExampleLinter2 ..|> Linter
 TooManyParametersLinter ..|> Linter
 LinterMain o-- Linter
 LinterMain *-- FileLoader
+PublicNonFinalFieldLinter ..|> Linter
 @enduml
