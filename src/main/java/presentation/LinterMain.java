@@ -1,5 +1,10 @@
 package presentation;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 import datastorage.FileLoader;
 import domain.ExampleLinter2;
 import domain.Linter;
@@ -7,20 +12,15 @@ import domain.PublicNonFinalFieldLinter;
 import domain.SRPLinter;
 import domain.SnakeLinter;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
 public class LinterMain {
-    private final Scanner scanner;
     private final List<Linter> availableLinters;
     private final FileLoader fileLoader;
+    private final Scanner scanner;
 
     public LinterMain() {
-        this.scanner = new Scanner(System.in);
         this.availableLinters = new ArrayList<>();
         this.fileLoader = new FileLoader();
+        this.scanner = new Scanner(System.in);
     }
 
     public static void main(String[] args) {
@@ -55,7 +55,7 @@ public class LinterMain {
             return;
         }
 
-        String result = callLinters(availableLinters, files);
+        String result = runLinters(availableLinters, files);
         displayResult(result);
     }
 
@@ -67,18 +67,18 @@ public class LinterMain {
         return scanner.nextLine();
     }
 
-    private String callLinters(List<Linter> linters, List<File> files) {
+    private void displayResult(String result) {
+        System.out.println();
+        System.out.println("=== Lint Results ===");
+        System.out.println(result);
+    }
+
+    private String runLinters(List<Linter> linters, List<File> files) {
         StringBuilder output = new StringBuilder();
         for (Linter linter : linters) {
             output.append("[").append(linter.getClass().getSimpleName()).append("]").append(System.lineSeparator());
             output.append(linter.lint(files)).append(System.lineSeparator()).append(System.lineSeparator());
         }
         return output.toString();
-    }
-
-    public void displayResult(String result) {
-        System.out.println();
-        System.out.println("=== Lint Results ===");
-        System.out.println(result);
     }
 }
