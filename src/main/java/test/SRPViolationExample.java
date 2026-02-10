@@ -1,4 +1,4 @@
-package example;
+package test;
 
 /**
  * Example class with POOR cohesion (LCOM >= 2).

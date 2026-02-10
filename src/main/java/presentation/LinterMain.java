@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import datastorage.FileLoader;
-import domain.ExampleLinter2;
 import domain.Linter;
 import domain.PlantUMLGenerator;
 import domain.PublicNonFinalFieldLinter;
@@ -33,7 +32,7 @@ public class LinterMain {
         availableLinters.clear();
 
         // Create data layer dependencies (shared across linters if needed)
-        datastorage.BytecodeReader bytecodeReader = new datastorage.BytecodeReader();
+        datastorage.ASMReader asmReader = new datastorage.ASMReader();
 
         // Create domain layer utilities
         domain.LCOMCalculator lcomCalculator = new domain.LCOMCalculator();
@@ -42,7 +41,7 @@ public class LinterMain {
         availableLinters.add(new SnakeLinter());
         availableLinters.add(new TrailingWhitespaceLinter());
         availableLinters.add(new PublicNonFinalFieldLinter());
-        availableLinters.add(new SRPLinter(bytecodeReader, lcomCalculator));
+        availableLinters.add(new SRPLinter(asmReader, lcomCalculator));
         availableLinters.add(new PlantUMLGenerator());
     }
 
