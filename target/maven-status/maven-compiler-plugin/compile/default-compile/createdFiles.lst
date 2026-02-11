@@ -1,0 +1,13 @@
+domain\TooManyParametersLinter.class
+domain\TrailingWhitespaceLinter.class
+domain\LCOMCalculator$1UnionFind.class
+domain\LCOMCalculator.class
+domain\SnakeLinter.class
+domain\PublicNonFinalFieldLinter.class
+datastorage\ASMReader.class
+domain\SRPLinter.class
+domain\PlantUMLGenerator.class
+domain\Linter.class
+datastorage\FileLoader.class
+presentation\LinterMain.class
+domain\LCOMCalculator$LCOMResult.class

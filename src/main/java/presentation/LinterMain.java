@@ -15,6 +15,7 @@ import domain.PlantUMLGenerator;
 import domain.PublicNonFinalFieldLinter;
 import domain.SRPLinter;
 import domain.SnakeLinter;
+import domain.TooManyParametersLinter;
 import domain.TrailingWhitespaceLinter;
 
 public class LinterMain {
@@ -56,6 +57,7 @@ public class LinterMain {
         availableLinters.add(new PublicNonFinalFieldLinter());
         availableLinters.add(new SRPLinter(asmReader, lcomCalculator));
         availableLinters.add(new PlantUMLGenerator());
+        availableLinters.add(new TooManyParametersLinter());
     }
 
     public void run() {
