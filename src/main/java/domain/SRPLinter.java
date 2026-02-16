@@ -1,3 +1,4 @@
+// Jasmeen
 package domain;
 
 import datastorage.ASMReader;
@@ -26,7 +27,7 @@ public class SRPLinter implements Linter {
      * Creates an SRP linter with default LCOM threshold of 2.
      * Dependencies are injected to follow Dependency Inversion Principle.
      * 
-     * @param ASMReader the bytecode reader for loading class files
+     * @param ASMReader      the bytecode reader for loading class files
      * @param lcomCalculator the LCOM calculator for cohesion analysis
      */
     public SRPLinter(ASMReader ASMReader, LCOMCalculator lcomCalculator) {
@@ -39,7 +40,7 @@ public class SRPLinter implements Linter {
      * 
      * @param lcomThreshold  minimum LCOM score to flag as violation (typically 2 or
      *                       higher)
-     * @param ASMReader the bytecode reader for loading class files
+     * @param ASMReader      the bytecode reader for loading class files
      * @param lcomCalculator the LCOM calculator for cohesion analysis
      */
     public SRPLinter(int lcomThreshold, ASMReader ASMReader, LCOMCalculator lcomCalculator) {
