@@ -13,6 +13,7 @@ import datastorage.FileLoader;
 import domain.Linter;
 import domain.AdapterPatternLinter;
 import domain.BooleanFlagMethodLinter;
+import domain.DecoratorPatternLinter;
 import domain.FacadePatternLinter;
 import domain.PlantUMLGenerator;
 import domain.PublicNonFinalFieldLinter;
@@ -27,6 +28,7 @@ public class LinterMain {
     private static final List<Class<? extends Linter>> CLASS_FILE_LINTER_TYPES = List.of(
             SRPLinter.class,
             FacadePatternLinter.class,
+            DecoratorPatternLinter.class,
             AdapterPatternLinter.class,
             BooleanFlagMethodLinter.class,
             PlantUMLGenerator.class);
@@ -65,6 +67,7 @@ public class LinterMain {
         availableLinters.add(new PublicNonFinalFieldLinter());
         availableLinters.add(new SRPLinter(asmReader, lcomCalculator));
         availableLinters.add(new FacadePatternLinter());
+        availableLinters.add(new DecoratorPatternLinter());
         availableLinters.add(new AdapterPatternLinter());
         availableLinters.add(new BooleanFlagMethodLinter());
         availableLinters.add(new PlantUMLGenerator());
