@@ -9,8 +9,6 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,49 +16,33 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class FacadePatternLinter implements Linter {
-    private final ASMReader asmReader;
+public class FacadePatternLinter extends AbstractASMLinter {
+
+    private Set<String> internalClassNames;
 
     public FacadePatternLinter() {
-        this.asmReader = new ASMReader();
+        super();
     }
 
     public FacadePatternLinter(ASMReader asmReader) {
-        this.asmReader = asmReader;
+        super(asmReader);
     }
 
     @Override
-    public String lint(List<File> files) {
-        StringBuilder result = new StringBuilder();
-        int candidateCount = 0;
+    protected void preProcessClasses(List<ClassNode> classes) {
+        internalClassNames = classes.stream()
+                .map(classNode -> classNode.name)
+                .collect(Collectors.toCollection(HashSet::new));
+    }
 
-        try {
-            List<ClassNode> classes = asmReader.getClasses(files);
-            Set<String> internalClassNames = classes.stream()
-                    .map(classNode -> classNode.name)
-                    .collect(Collectors.toCollection(HashSet::new));
-
-            for (ClassNode classNode : classes) {
-                if (isSkippableClass(classNode)) {
-                    continue;
-                }
-
-                FacadeCandidate candidate = analyzeCandidate(classNode, internalClassNames);
-                if (candidate.isFacade) {
-                    candidateCount++;
-                    appendCandidate(result, candidate);
-                }
-            }
-        } catch (IOException e) {
-            return "Error reading class files: " + e.getMessage();
+    @Override
+    protected int lintClass(ClassNode classNode, List<ClassNode> allClasses, StringBuilder result) {
+        FacadeCandidate candidate = analyzeCandidate(classNode, internalClassNames);
+        if (candidate.isFacade) {
+            appendCandidate(result, candidate);
+            return 1;
         }
-
-        if (candidateCount == 0) {
-            return "No facade pattern candidates found.";
-        }
-
-        result.append("Total facade pattern candidates: ").append(candidateCount);
-        return result.toString();
+        return 0;
     }
 
     private FacadeCandidate analyzeCandidate(ClassNode classNode, Set<String> internalClassNames) {
@@ -115,11 +97,11 @@ public class FacadePatternLinter implements Linter {
         return subsystemTypes;
     }
 
-    private Set<String> collectInvokedInternalTypes(MethodNode method, String ownerName, Set<String> internalClassNames) {
+    private Set<String> collectInvokedInternalTypes(MethodNode method, String ownerName,
+            Set<String> internalClassNames) {
         Set<String> owners = new TreeSet<>();
-        for (AbstractInsnNode instruction = method.instructions.getFirst();
-                instruction != null;
-                instruction = instruction.getNext()) {
+        for (AbstractInsnNode instruction = method.instructions
+                .getFirst(); instruction != null; instruction = instruction.getNext()) {
             if (instruction instanceof MethodInsnNode) {
                 MethodInsnNode methodInstruction = (MethodInsnNode) instruction;
                 if (!methodInstruction.owner.equals(ownerName)
@@ -146,19 +128,6 @@ public class FacadePatternLinter implements Linter {
         if (type.getSort() == Type.ARRAY) {
             extractObjectTypes(type.getElementType(), types);
         }
-    }
-
-    private boolean isSkippableClass(ClassNode classNode) {
-        if ((classNode.access & Opcodes.ACC_INTERFACE) != 0) {
-            return true;
-        }
-        if ((classNode.access & Opcodes.ACC_ENUM) != 0) {
-            return true;
-        }
-        if ((classNode.access & Opcodes.ACC_ANNOTATION) != 0) {
-            return true;
-        }
-        return classNode.name.contains("$");
     }
 
     private boolean isPublicBusinessMethod(MethodNode method) {
@@ -195,6 +164,16 @@ public class FacadePatternLinter implements Linter {
         return typeNames.stream()
                 .map(type -> type.replace('/', '.'))
                 .collect(Collectors.joining(", "));
+    }
+
+    @Override
+    protected String getNoViolationsMessage() {
+        return "No facade pattern candidates found.";
+    }
+
+    @Override
+    protected String getViolationsMessage(int violationCount, StringBuilder result) {
+        return "Total facade pattern candidates: " + violationCount + System.lineSeparator() + result.toString();
     }
 
     private static class FacadeCandidate {

@@ -4,8 +4,6 @@ package domain;
 import datastorage.ASMReader;
 import org.objectweb.asm.tree.ClassNode;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -16,22 +14,21 @@ import java.util.List;
  * violations,
  * indicating the class may have multiple responsibilities.
  */
-public class SRPLinter implements Linter {
+public class SRPLinter extends AbstractASMLinter {
 
     private static final int DEFAULT_LCOM_THRESHOLD = 2;
     private final int lcomThreshold;
-    private final ASMReader ASMReader;
     private final LCOMCalculator lcomCalculator;
 
     /**
      * Creates an SRP linter with default LCOM threshold of 2.
      * Dependencies are injected to follow Dependency Inversion Principle.
      * 
-     * @param ASMReader      the bytecode reader for loading class files
+     * @param asmReader      the bytecode reader for loading class files
      * @param lcomCalculator the LCOM calculator for cohesion analysis
      */
-    public SRPLinter(ASMReader ASMReader, LCOMCalculator lcomCalculator) {
-        this(DEFAULT_LCOM_THRESHOLD, ASMReader, lcomCalculator);
+    public SRPLinter(ASMReader asmReader, LCOMCalculator lcomCalculator) {
+        this(DEFAULT_LCOM_THRESHOLD, asmReader, lcomCalculator);
     }
 
     /**
@@ -40,77 +37,27 @@ public class SRPLinter implements Linter {
      * 
      * @param lcomThreshold  minimum LCOM score to flag as violation (typically 2 or
      *                       higher)
-     * @param ASMReader      the bytecode reader for loading class files
+     * @param asmReader      the bytecode reader for loading class files
      * @param lcomCalculator the LCOM calculator for cohesion analysis
      */
-    public SRPLinter(int lcomThreshold, ASMReader ASMReader, LCOMCalculator lcomCalculator) {
+    public SRPLinter(int lcomThreshold, ASMReader asmReader, LCOMCalculator lcomCalculator) {
+        super(asmReader);
         this.lcomThreshold = lcomThreshold;
-        this.ASMReader = ASMReader;
         this.lcomCalculator = lcomCalculator;
     }
 
     @Override
-    public String lint(List<File> files) {
-        StringBuilder result = new StringBuilder();
-        int violationCount = 0;
-        int totalClasses = 0;
+    protected int lintClass(ClassNode classNode, List<ClassNode> allClasses, StringBuilder result) {
+        LCOMCalculator.LCOMResult lcomResult = lcomCalculator.calculateLCOM(classNode);
 
-        try {
-            List<ClassNode> classes = ASMReader.getClasses(files);
-
-            for (ClassNode classNode : classes) {
-                // Skip interfaces, enums, and anonymous classes
-                if (isSkippableClass(classNode)) {
-                    continue;
-                }
-
-                totalClasses++;
-                LCOMCalculator.LCOMResult lcomResult = lcomCalculator.calculateLCOM(classNode);
-
-                // Only report classes with methods and fields
-                if (lcomResult.getMethodCount() > 0 && lcomResult.getFieldCount() > 0) {
-                    if (lcomResult.hasLowCohesion(lcomThreshold)) {
-                        violationCount++;
-                        appendViolation(result, classNode, lcomResult);
-                    }
-                }
+        // Only report classes with methods and fields
+        if (lcomResult.getMethodCount() > 0 && lcomResult.getFieldCount() > 0) {
+            if (lcomResult.hasLowCohesion(lcomThreshold)) {
+                appendViolation(result, classNode, lcomResult);
+                return 1;
             }
-
-        } catch (IOException e) {
-            result.append("Error reading class files: ").append(e.getMessage())
-                    .append(System.lineSeparator());
         }
-
-        if (violationCount == 0) {
-            return String.format("No SRP violations found. Analyzed %d classes.", totalClasses);
-        }
-
-        result.append(System.lineSeparator());
-        result.append(String.format("Found %d SRP violation(s) in %d analyzed classes.",
-                violationCount, totalClasses));
-        return result.toString();
-    }
-
-    /**
-     * Checks if a class should be skipped from analysis.
-     */
-    private boolean isSkippableClass(ClassNode classNode) {
-        // Skip interfaces (they don't have instance fields typically)
-        if ((classNode.access & 0x0200) != 0) { // ACC_INTERFACE
-            return true;
-        }
-
-        // Skip enums
-        if ((classNode.access & 0x4000) != 0) { // ACC_ENUM
-            return true;
-        }
-
-        // Skip anonymous classes (contain $ in name)
-        if (classNode.name.contains("$")) {
-            return true;
-        }
-
-        return false;
+        return 0;
     }
 
     /**
@@ -172,5 +119,31 @@ public class SRPLinter implements Linter {
                 methodList.get(1),
                 methodList.get(2),
                 methods.size());
+    }
+
+    @Override
+    protected String getNoViolationsMessage() {
+        return "No SRP violations found.";
+    }
+
+    @Override
+    protected String getViolationsMessage(int violationCount, StringBuilder result) {
+        // SRPLinter had a specific summary format, but leveraging the template standard
+        // is fine too.
+        // The original had:
+        // Found %d SRP violation(s) in %d analyzed classes.
+        // Since we don't have totalClasses easily, we'll just return the result
+        // accumulator which contains the formatted violations.
+        // We can prepend the count if we want to match AbstractASMLinter's default
+        // style,
+        // or just return the result if the individual violations are detailed enough
+        // (which they are).
+        // Let's stick to returning the result as SRPLinter's violations are very large
+        // blocks.
+        // Actually, let's prepend a summary line.
+        return System.lineSeparator() +
+                String.format("Found %d SRP violation(s).", violationCount) +
+                System.lineSeparator() +
+                result.toString();
     }
 }

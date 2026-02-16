@@ -9,53 +9,29 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class AdapterPatternLinter implements Linter {
-    private final ASMReader asmReader;
+public class AdapterPatternLinter extends AbstractASMLinter {
 
     public AdapterPatternLinter() {
-        this.asmReader = new ASMReader();
+        super();
     }
 
     public AdapterPatternLinter(ASMReader asmReader) {
-        this.asmReader = asmReader;
+        super(asmReader);
     }
 
     @Override
-    public String lint(List<File> files) {
-        StringBuilder result = new StringBuilder();
-        int candidateCount = 0;
-
-        try {
-            List<ClassNode> classes = asmReader.getClasses(files);
-
-            for (ClassNode classNode : classes) {
-                if (isSkippableClass(classNode)) {
-                    continue;
-                }
-
-                AdapterCandidate candidate = analyzeClass(classNode);
-                if (candidate.isAdapter) {
-                    candidateCount++;
-                    appendCandidate(result, candidate);
-                }
-            }
-        } catch (IOException e) {
-            return "Error reading class files: " + e.getMessage();
+    protected int lintClass(ClassNode classNode, List<ClassNode> allClasses, StringBuilder result) {
+        AdapterCandidate candidate = analyzeClass(classNode);
+        if (candidate.isAdapter) {
+            appendCandidate(result, candidate);
+            return 1;
         }
-
-        if (candidateCount == 0) {
-            return "No adapter pattern candidates found.";
-        }
-
-        result.append("Total adapter pattern candidates: ").append(candidateCount);
-        return result.toString();
+        return 0;
     }
 
     private AdapterCandidate analyzeClass(ClassNode classNode) {
@@ -117,9 +93,8 @@ public class AdapterPatternLinter implements Linter {
 
     private Set<String> collectDelegatedOwners(MethodNode method, Set<String> adapteeFieldTypes) {
         Set<String> delegatedOwners = new TreeSet<>();
-        for (AbstractInsnNode instruction = method.instructions.getFirst();
-                instruction != null;
-                instruction = instruction.getNext()) {
+        for (AbstractInsnNode instruction = method.instructions
+                .getFirst(); instruction != null; instruction = instruction.getNext()) {
             if (instruction instanceof MethodInsnNode) {
                 MethodInsnNode methodInstruction = (MethodInsnNode) instruction;
                 if (adapteeFieldTypes.contains(methodInstruction.owner)) {
@@ -128,19 +103,6 @@ public class AdapterPatternLinter implements Linter {
             }
         }
         return delegatedOwners;
-    }
-
-    private boolean isSkippableClass(ClassNode classNode) {
-        if ((classNode.access & Opcodes.ACC_INTERFACE) != 0) {
-            return true;
-        }
-        if ((classNode.access & Opcodes.ACC_ENUM) != 0) {
-            return true;
-        }
-        if ((classNode.access & Opcodes.ACC_ANNOTATION) != 0) {
-            return true;
-        }
-        return classNode.name.contains("$");
     }
 
     private boolean isSkippableMethod(MethodNode method) {
@@ -170,6 +132,16 @@ public class AdapterPatternLinter implements Linter {
         return types.stream()
                 .map(type -> type.replace('/', '.'))
                 .collect(Collectors.joining(", "));
+    }
+
+    @Override
+    protected String getNoViolationsMessage() {
+        return "No adapter pattern candidates found.";
+    }
+
+    @Override
+    protected String getViolationsMessage(int violationCount, StringBuilder result) {
+        return "Total adapter pattern candidates: " + violationCount + System.lineSeparator() + result.toString();
     }
 
     private static class AdapterCandidate {
