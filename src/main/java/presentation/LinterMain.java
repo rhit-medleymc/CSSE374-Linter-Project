@@ -9,42 +9,51 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.util.Set;
 
+import datastorage.ConfigLoader;
 import datastorage.FileLoader;
-import domain.Linter;
 import domain.AdapterPatternLinter;
 import domain.BooleanFlagMethodLinter;
 import domain.DecoratorPatternLinter;
 import domain.FacadePatternLinter;
+import domain.Linter;
+import domain.LinterConfig;
 import domain.PlantUMLGenerator;
 import domain.PublicNonFinalFieldLinter;
 import domain.SRPLinter;
+import domain.SingletonPatternLinter;
 import domain.SnakeLinter;
 import domain.TooManyParametersLinter;
 import domain.TrailingWhitespaceLinter;
 import domain.UnusedImportLinter;
 
 public class LinterMain {
+    private static final String DEFAULT_CONFIG_PATH = "linter.properties";
+
     // Update these lists to change which linters run for each file category.
     private static final List<Class<? extends Linter>> CLASS_FILE_LINTER_TYPES = List.of(
             SRPLinter.class,
             FacadePatternLinter.class,
+            SingletonPatternLinter.class,
             DecoratorPatternLinter.class,
             AdapterPatternLinter.class,
             BooleanFlagMethodLinter.class,
+            PublicNonFinalFieldLinter.class,
+            TooManyParametersLinter.class,
             PlantUMLGenerator.class);
     private static final List<Class<? extends Linter>> NON_CLASS_FILE_LINTER_TYPES = List.of(
             SnakeLinter.class,
             UnusedImportLinter.class,
-            TrailingWhitespaceLinter.class,
-            PublicNonFinalFieldLinter.class);
+            TrailingWhitespaceLinter.class);
 
     private final List<Linter> availableLinters;
     private final FileLoader fileLoader;
+    private final ConfigLoader configLoader;
     private final Scanner scanner;
 
     public LinterMain() {
         this.availableLinters = new ArrayList<>();
         this.fileLoader = new FileLoader();
+        this.configLoader = new ConfigLoader();
         this.scanner = new Scanner(System.in);
     }
 
@@ -52,7 +61,7 @@ public class LinterMain {
         new LinterMain().run();
     }
 
-    public void loadLinters() {
+    public void loadLinters(LinterConfig config) {
         availableLinters.clear();
 
         // Create data layer dependencies (shared across linters if needed)
@@ -61,24 +70,29 @@ public class LinterMain {
         // Create domain layer utilities
         domain.LCOMCalculator lcomCalculator = new domain.LCOMCalculator();
 
-        // Add linters with dependency injection
-        availableLinters.add(new SnakeLinter());
-        availableLinters.add(new TrailingWhitespaceLinter());
-        availableLinters.add(new PublicNonFinalFieldLinter());
-        availableLinters.add(new SRPLinter(asmReader, lcomCalculator));
-        availableLinters.add(new FacadePatternLinter());
-        availableLinters.add(new DecoratorPatternLinter());
-        availableLinters.add(new AdapterPatternLinter());
-        availableLinters.add(new BooleanFlagMethodLinter());
-        availableLinters.add(new PlantUMLGenerator());
-        availableLinters.add(new UnusedImportLinter());
-        availableLinters.add(new TooManyParametersLinter());
+        // Add linters with dependency injection and config-driven thresholds
+        addIfEnabled(new SnakeLinter(), SnakeLinter.class, config);
+        addIfEnabled(new TrailingWhitespaceLinter(), TrailingWhitespaceLinter.class, config);
+        addIfEnabled(new PublicNonFinalFieldLinter(asmReader), PublicNonFinalFieldLinter.class, config);
+        addIfEnabled(new SRPLinter(config.getSrpLcomThreshold(), asmReader, lcomCalculator), SRPLinter.class, config);
+        addIfEnabled(new FacadePatternLinter(asmReader), FacadePatternLinter.class, config);
+        addIfEnabled(new SingletonPatternLinter(asmReader), SingletonPatternLinter.class, config);
+        addIfEnabled(new DecoratorPatternLinter(asmReader), DecoratorPatternLinter.class, config);
+        addIfEnabled(new AdapterPatternLinter(asmReader), AdapterPatternLinter.class, config);
+        addIfEnabled(new BooleanFlagMethodLinter(asmReader), BooleanFlagMethodLinter.class, config);
+        addIfEnabled(new PlantUMLGenerator(), PlantUMLGenerator.class, config);
+        addIfEnabled(new UnusedImportLinter(), UnusedImportLinter.class, config);
+        addIfEnabled(new TooManyParametersLinter(config.getTooManyParametersLimit(), asmReader),
+                TooManyParametersLinter.class, config);
     }
 
     public void run() {
-        loadLinters();
+        LinterConfig config = configLoader.loadConfig(DEFAULT_CONFIG_PATH);
+        loadLinters(config);
+
         System.out.println("=== Base Linter (Terminal) ===");
         System.out.println("Built-in linter #1 checks for trailing whitespace.");
+        System.out.println("Config file: " + DEFAULT_CONFIG_PATH);
 
         String fileInput = askForFileInput();
         List<File> requestedPaths = fileLoader.loadFiles(fileInput);
@@ -99,6 +113,12 @@ public class LinterMain {
 
         String result = runLintBatches(classFiles, nonClassFiles);
         displayResult(result);
+    }
+
+    private void addIfEnabled(Linter linter, Class<? extends Linter> linterType, LinterConfig config) {
+        if (config.isLinterEnabled(linterType)) {
+            availableLinters.add(linter);
+        }
     }
 
     private String askForFileInput() {

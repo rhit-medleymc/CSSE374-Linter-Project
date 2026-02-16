@@ -1,3 +1,5 @@
+package test;
+
 public class TooManyParamsDemo {
     public TooManyParamsDemo(int a, int b, int c, int d, int e, int f) {}
 
