@@ -80,7 +80,7 @@ public class LinterMain {
         addIfEnabled(new PublicNonFinalFieldLinter(asmReader), PublicNonFinalFieldLinter.class, config);
         addIfEnabled(new SRPLinter(config.getSrpLcomThreshold(), asmReader, lcomCalculator), SRPLinter.class, config);
         addIfEnabled(new FacadePatternLinter(asmReader), FacadePatternLinter.class, config);
-        availableLinters.add(new StrategyPatternLinter());
+        addIfEnabled(new StrategyPatternLinter(), StrategyPatternLinter.class, config);
         addIfEnabled(new SingletonPatternLinter(asmReader), SingletonPatternLinter.class, config);
         addIfEnabled(new DecoratorPatternLinter(asmReader), DecoratorPatternLinter.class, config);
         addIfEnabled(new AdapterPatternLinter(asmReader), AdapterPatternLinter.class, config);
@@ -89,7 +89,7 @@ public class LinterMain {
         addIfEnabled(new UnusedImportLinter(), UnusedImportLinter.class, config);
         addIfEnabled(new TooManyParametersLinter(config.getTooManyParametersLimit(), asmReader),
                 TooManyParametersLinter.class, config);
-        availableLinters.add(new DesignRiskLinter(asmReader, lcomCalculator));
+        addIfEnabled(new DesignRiskLinter(asmReader, lcomCalculator), DesignRiskLinter.class, config);
     }
 
     public void run() {
