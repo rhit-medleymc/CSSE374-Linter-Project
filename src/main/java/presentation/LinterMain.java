@@ -22,6 +22,7 @@ import domain.SnakeLinter;
 import domain.TooManyParametersLinter;
 import domain.TrailingWhitespaceLinter;
 import domain.UnusedImportLinter;
+import domain.DesignRiskLinter;
 
 public class LinterMain {
     // Update these lists to change which linters run for each file category.
@@ -31,7 +32,8 @@ public class LinterMain {
             DecoratorPatternLinter.class,
             AdapterPatternLinter.class,
             BooleanFlagMethodLinter.class,
-            PlantUMLGenerator.class);
+            PlantUMLGenerator.class,
+            DesignRiskLinter.class);
     private static final List<Class<? extends Linter>> NON_CLASS_FILE_LINTER_TYPES = List.of(
             SnakeLinter.class,
             UnusedImportLinter.class,
@@ -73,6 +75,7 @@ public class LinterMain {
         availableLinters.add(new PlantUMLGenerator());
         availableLinters.add(new UnusedImportLinter());
         availableLinters.add(new TooManyParametersLinter());
+        availableLinters.add(new DesignRiskLinter(asmReader, lcomCalculator));
     }
 
     public void run() {
