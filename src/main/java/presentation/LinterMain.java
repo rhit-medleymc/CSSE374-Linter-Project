@@ -19,6 +19,7 @@ import domain.PlantUMLGenerator;
 import domain.PublicNonFinalFieldLinter;
 import domain.SRPLinter;
 import domain.SnakeLinter;
+import domain.StrategyPatternLinter;
 import domain.TooManyParametersLinter;
 import domain.TrailingWhitespaceLinter;
 import domain.UnusedImportLinter;
@@ -28,6 +29,7 @@ public class LinterMain {
     private static final List<Class<? extends Linter>> CLASS_FILE_LINTER_TYPES = List.of(
             SRPLinter.class,
             FacadePatternLinter.class,
+            StrategyPatternLinter.class,
             DecoratorPatternLinter.class,
             AdapterPatternLinter.class,
             BooleanFlagMethodLinter.class,
@@ -67,6 +69,7 @@ public class LinterMain {
         availableLinters.add(new PublicNonFinalFieldLinter());
         availableLinters.add(new SRPLinter(asmReader, lcomCalculator));
         availableLinters.add(new FacadePatternLinter());
+        availableLinters.add(new StrategyPatternLinter());
         availableLinters.add(new DecoratorPatternLinter());
         availableLinters.add(new AdapterPatternLinter());
         availableLinters.add(new BooleanFlagMethodLinter());
