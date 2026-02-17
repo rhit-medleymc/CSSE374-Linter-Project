@@ -11,6 +11,9 @@ package data_storage{
     +loadFiles(input: String): List<File>
     +getFile(): File
   }
+  class ConfigLoader {
+    +loadConfig(path: String): LinterConfig
+  }
 }
 
 package domain{
@@ -20,29 +23,42 @@ package domain{
     -hasTrailingWhitespace(line: String): boolean
   }
 
-  class PublicNonFinalFieldLinter implements Linter{
+  abstract class AbstractASMLinter implements Linter {
     +lint(files: List<File>): String
-    -lintClassFile(file: File, result: StringBuilder): int
-    -lintJavaSource(file: File, result: StringBuilder): int
-    -extractName(statement: String): List<String>
-    -isPublicNonFinalFieldDeclaration(statement: String): boolean
-    -removeComments(line: String, inBlockComment: boolean[]): String
+    #lintClass(classNode: ClassNode, allClasses: List<ClassNode>, result: StringBuilder): int
+    #getNoViolationsMessage(): String
+    #getViolationsMessage(violationCount: int, result: StringBuilder): String
+  }
+
+  class PublicNonFinalFieldLinter extends AbstractASMLinter{
+    #lintClass(classNode: ClassNode, allClasses: List<ClassNode>, result: StringBuilder): int
+    #getNoViolationsMessage(): String
+    #getViolationsMessage(violationCount: int, result: StringBuilder): String
   }
 
   class ExampleLinter2 {
     +lint(files: List<File>): String
   }
 
-  class TooManyParametersLinter implements Linter{
-    +lint(files: List<File>): String
-    -lintClassFile(file: File, result: StringBuilder): int
-    -lintJavaSource(file: File, result: StringBuilder): int
-    -countParameters(params: String): int
-    -looksLike(line: String): boolean
-    -extractName(signature: String): String
-    -removeComments(line: String, inBlockComment: boolean[]): String
+  class TooManyParametersLinter extends AbstractASMLinter{
+    #lintClass(classNode: ClassNode, allClasses: List<ClassNode>, result: StringBuilder): int
+    -isSkippableMethod(method: MethodNode): boolean
+    #getNoViolationsMessage(): String
+    #getViolationsMessage(violationCount: int, result: StringBuilder): String
   }
-
+  class SingletonPatternLinter extends AbstractASMLinter{
+    #lintClass(classNode: ClassNode, allClasses: List<ClassNode>, result: StringBuilder): int
+    -hasPrivateConstructors(classNode: ClassNode): boolean
+    -findSingletonField(classNode: ClassNode): FieldNode
+    -hasPublicStaticAccessor(classNode: ClassNode, singletonField: FieldNode): boolean
+    #getNoViolationsMessage(): String
+    #getViolationsMessage(violationCount: int, result: StringBuilder): String
+  }
+  class LinterConfig {
+    +getTooManyParametersLimit(): int
+    +getSrpLcomThreshold(): int
+    +isLinterEnabled(linterType: Class): boolean
+  }
   interface Linter {
     lint(files: List<File>): String
   }
@@ -52,11 +68,13 @@ package presentation{
   class LinterMain {
     -availableLinters: List<Linter>
     -fileLoader: FileLoader
+    -configLoader: ConfigLoader
     -scanner: Scanner
     --
     +LinterMain()
     +{static} main(args: String[]): void
-    +loadLinters(): void
+    +loadLinters(config: LinterConfig): void
+    -addIfEnabled(linter: Linter, linterType: Class, config: LinterConfig): void
     +run(): void
     -askForFileInput(): String
     -displayResult(result: String): void
@@ -66,8 +84,22 @@ package presentation{
 
 SnakeLinter ..|> Linter
 ExampleLinter2 ..|> Linter
-TooManyParametersLinter ..|> Linter
+TooManyParametersLinter --|> AbstractASMLinter
 LinterMain o-- Linter
 LinterMain *-- FileLoader
-PublicNonFinalFieldLinter ..|> Linter
+LinterMain *-- ConfigLoader
+PublicNonFinalFieldLinter --|> AbstractASMLinter
+SingletonPatternLinter --|> AbstractASMLinter
 @enduml
+
+
+
+
+
+
+
+
+
+
+
+
