@@ -14,6 +14,7 @@ import datastorage.FileLoader;
 import domain.AdapterPatternLinter;
 import domain.BooleanFlagMethodLinter;
 import domain.DecoratorPatternLinter;
+import domain.DesignRiskLinter;
 import domain.FacadePatternLinter;
 import domain.Linter;
 import domain.LinterConfig;
@@ -22,6 +23,7 @@ import domain.PublicNonFinalFieldLinter;
 import domain.SRPLinter;
 import domain.SingletonPatternLinter;
 import domain.SnakeLinter;
+import domain.StrategyPatternLinter;
 import domain.TooManyParametersLinter;
 import domain.TrailingWhitespaceLinter;
 import domain.UnusedImportLinter;
@@ -33,13 +35,15 @@ public class LinterMain {
     private static final List<Class<? extends Linter>> CLASS_FILE_LINTER_TYPES = List.of(
             SRPLinter.class,
             FacadePatternLinter.class,
+            StrategyPatternLinter.class,
             SingletonPatternLinter.class,
             DecoratorPatternLinter.class,
             AdapterPatternLinter.class,
             BooleanFlagMethodLinter.class,
             PublicNonFinalFieldLinter.class,
             TooManyParametersLinter.class,
-            PlantUMLGenerator.class);
+            PlantUMLGenerator.class,
+            DesignRiskLinter.class);
     private static final List<Class<? extends Linter>> NON_CLASS_FILE_LINTER_TYPES = List.of(
             SnakeLinter.class,
             UnusedImportLinter.class,
@@ -76,6 +80,7 @@ public class LinterMain {
         addIfEnabled(new PublicNonFinalFieldLinter(asmReader), PublicNonFinalFieldLinter.class, config);
         addIfEnabled(new SRPLinter(config.getSrpLcomThreshold(), asmReader, lcomCalculator), SRPLinter.class, config);
         addIfEnabled(new FacadePatternLinter(asmReader), FacadePatternLinter.class, config);
+        addIfEnabled(new StrategyPatternLinter(), StrategyPatternLinter.class, config);
         addIfEnabled(new SingletonPatternLinter(asmReader), SingletonPatternLinter.class, config);
         addIfEnabled(new DecoratorPatternLinter(asmReader), DecoratorPatternLinter.class, config);
         addIfEnabled(new AdapterPatternLinter(asmReader), AdapterPatternLinter.class, config);
@@ -84,6 +89,7 @@ public class LinterMain {
         addIfEnabled(new UnusedImportLinter(), UnusedImportLinter.class, config);
         addIfEnabled(new TooManyParametersLinter(config.getTooManyParametersLimit(), asmReader),
                 TooManyParametersLinter.class, config);
+        addIfEnabled(new DesignRiskLinter(asmReader, lcomCalculator), DesignRiskLinter.class, config);
     }
 
     public void run() {
