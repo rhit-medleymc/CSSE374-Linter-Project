@@ -2,6 +2,7 @@ C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE37
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\AbstractSourceLinter.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\datastorage\ConfigLoader.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\LinterConfig.java
+C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\StrategyPatternLinter.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\inlineexamples\CheckoutFacade.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\AbstractASMLinter.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\example\UnusedImportExample.java
@@ -11,11 +12,13 @@ C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE37
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\TrailingWhitespaceLinter.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\PublicNonFinalFieldLinter.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\example\SingletonExample.java
+C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\DesignRiskLinter.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\UnusedImportLinter.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\presentation\LinterMain.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\AdapterPatternLinter.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\test\MultipleSRPViolationExample.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\example\DecoratorExample.java
+C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\example\RiskExample.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\inlineexamples\LegacyGateway.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\DecoratorPatternLinter.java
 C:\Users\nayeems\Downloads\FILES\code-base\vscode\csse_374_w25-26\project\CSSE374-Linter-Project\src\main\java\domain\SingletonPatternLinter.java
