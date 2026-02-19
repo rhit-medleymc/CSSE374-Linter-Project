@@ -27,9 +27,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.7.0</version>
 				<configuration>
-					<excludes>
-						<exclude>test/*.java</exclude>
-					</excludes>
+
 					<source>11</source>
 					<target>11</target>
 					<compilerArgs>
