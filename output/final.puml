@@ -3,8 +3,7 @@
 
 package domain {
   abstract class AbstractASMLinter {
-  abstract class AbstractASMLinter {
-    note right: Template Method Pattern
+
     #asmReader: ASMReader
     --
     +AbstractASMLinter(asmReader: ASMReader)
@@ -18,8 +17,7 @@ package domain {
   }
 
   abstract class AbstractSourceLinter {
-  abstract class AbstractSourceLinter {
-    note right: Template Method Pattern
+
     +lint(files: List<File>): String
     -processDirectory(dir: File, violations: StringBuilder): void
     -processJavaFile(file: File, violations: StringBuilder): void
@@ -154,8 +152,6 @@ package domain {
   }
 
   interface Linter {
-  interface Linter {
-    note right: Strategy Pattern Interface
     ~lint(files: List<File>): String
   }
 
@@ -321,8 +317,6 @@ package datastorage{
 
 package presentation{
 class LinterFactory {
-class LinterFactory {
-  note top: Factory Pattern
   +createLinters(config: LinterConfig): List<Linter>
   -addIfEnabled(linters: List<Linter>, linter: Linter, linterType: Class<? extends Linter>, config: LinterConfig): void
 }
@@ -348,7 +342,7 @@ class LinterRunner {
   -{static} NON_CLASS_FILE_LINTER_TYPES: List<Class<? extends Linter>> = List.of(SnakeLinter.class, UnusedImportLinter.class, TrailingWhitespaceLinter.class)
   --
   +run(files: List<File>, availableLinters: List<Linter>): String
-  note right: Executes Strategies (Linters)
+
   -splitFilesByType(files: List<File>, classFiles: List<File>, nonClassFiles: List<File>): void
   -isClassFile(file: File): boolean
   -runLintBatches(classFiles: List<File>, nonClassFiles: List<File>, availableLinters: List<Linter>): String
@@ -421,5 +415,16 @@ LinterMain ..> ConfigLoader
 LinterMain ..> LinterFactory
 LinterMain ..> LinterRunner
 
+
+note right of domain.AbstractASMLinter: Template Method Pattern
+note right of domain.AbstractSourceLinter: Template Method Pattern
+note right of domain.Linter: Strategy Pattern Interface
+note top of presentation: we use three layer architecture (presentation, domain, datastorage)
+
+note top of datastorage.ASMReader: Adapter Pattern (Adapts ASM library)
+note top of presentation.LinterRunner: Facade Pattern
+note top of domain.SRPLinter: Single Responsibility Principle
+note top of presentation.LinterMain: Principle of Least Knowledge (Uses Factory, doesn't build Linters)
+note bottom of domain.AbstractASMLinter: Hollywood Principle (Parent calls Child)
 
 @enduml
