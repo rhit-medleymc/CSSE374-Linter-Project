@@ -1,4 +1,4 @@
-package presentation;
+package example;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,8 +9,10 @@ import datastorage.ConfigLoader;
 import datastorage.FileLoader;
 import domain.Linter;
 import domain.LinterConfig;
+import presentation.LinterFactory;
+import presentation.LinterRunner;
 
-public class LinterMain {
+public class LinterMainExample {
     private static final String DEFAULT_CONFIG_PATH = "linter.properties";
 
     private final List<Linter> availableLinters;
@@ -20,7 +22,7 @@ public class LinterMain {
     private final LinterFactory linterFactory;
     private final LinterRunner linterRunner;
 
-    public LinterMain() {
+    public LinterMainExample() {
         this.availableLinters = new ArrayList<>();
         this.fileLoader = new FileLoader();
         this.configLoader = new ConfigLoader();
@@ -30,7 +32,7 @@ public class LinterMain {
     }
 
     public static void main(String[] args) {
-        new LinterMain().run();
+        new LinterMainExample().run();
     }
 
     public void run() {
