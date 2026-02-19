@@ -16,6 +16,7 @@ import domain.BooleanFlagMethodLinter;
 import domain.DecoratorPatternLinter;
 import domain.DesignRiskLinter;
 import domain.FacadePatternLinter;
+import domain.LeastKnowledgePrincipleLinter;
 import domain.Linter;
 import domain.LinterConfig;
 import domain.PlantUMLGenerator;
@@ -47,7 +48,8 @@ public class LinterMain {
     private static final List<Class<? extends Linter>> NON_CLASS_FILE_LINTER_TYPES = List.of(
             SnakeLinter.class,
             UnusedImportLinter.class,
-            TrailingWhitespaceLinter.class);
+            TrailingWhitespaceLinter.class,
+            LeastKnowledgePrincipleLinter.class);
 
     private final List<Linter> availableLinters;
     private final FileLoader fileLoader;
@@ -87,9 +89,9 @@ public class LinterMain {
         addIfEnabled(new BooleanFlagMethodLinter(asmReader), BooleanFlagMethodLinter.class, config);
         addIfEnabled(new PlantUMLGenerator(), PlantUMLGenerator.class, config);
         addIfEnabled(new UnusedImportLinter(), UnusedImportLinter.class, config);
-        addIfEnabled(new TooManyParametersLinter(config.getTooManyParametersLimit(), asmReader),
-                TooManyParametersLinter.class, config);
+        addIfEnabled(new TooManyParametersLinter(config.getTooManyParametersLimit(), asmReader), TooManyParametersLinter.class, config);
         addIfEnabled(new DesignRiskLinter(asmReader, lcomCalculator), DesignRiskLinter.class, config);
+        addIfEnabled(new LeastKnowledgePrincipleLinter(), LeastKnowledgePrincipleLinter.class, config);
     }
 
     public void run() {
