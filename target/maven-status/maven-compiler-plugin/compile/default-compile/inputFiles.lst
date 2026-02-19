@@ -9,6 +9,7 @@
 /Users/jean-paulvestjens/CSSE374-Linter-Project/src/main/java/domain/BooleanFlagMethodLinter.java
 /Users/jean-paulvestjens/CSSE374-Linter-Project/src/main/java/domain/TrailingWhitespaceLinter.java
 /Users/jean-paulvestjens/CSSE374-Linter-Project/src/main/java/datastorage/ASMReader.java
+/Users/jean-paulvestjens/CSSE374-Linter-Project/src/main/java/domain/LeastKnowledgePrincipleLinter.java
 /Users/jean-paulvestjens/CSSE374-Linter-Project/src/main/java/domain/PublicNonFinalFieldLinter.java
 /Users/jean-paulvestjens/CSSE374-Linter-Project/src/main/java/domain/FacadePatternLinter.java
 /Users/jean-paulvestjens/CSSE374-Linter-Project/src/main/java/domain/LCOMCalculator.java
