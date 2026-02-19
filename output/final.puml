@@ -310,38 +310,48 @@ package datastorage{
   }
 
   class FileLoader {
-    -file: File
-    --
-    +loadFiles(input: String): List<File>
-    +getFile(): File
-  }
+  -file: File
+  --
+  +loadFiles(input: String): List<File>
+  +getFile(): File
+  -expandInputFiles(requestedPaths: List<File>): List<File>
+  -collectFiles(path: File, files: List<File>, seenPaths: Set<String>): void
+}
 }
 
 package presentation{
-  class LinterMain {
-    -{static} DEFAULT_CONFIG_PATH: String = "linter.properties"
-    -{static} CLASS_FILE_LINTER_TYPES: List<Class<? extends Linter>> = List.of(SRPLinter.class, FacadePatternLinter.class, StrategyPatternLinter.class, SingletonPatternLinter.class, DecoratorPatternLinter.class, AdapterPatternLinter.class, BooleanFlagMethodLinter.class, PublicNonFinalFieldLinter.class, TooManyParametersLinter.class, PlantUMLGenerator.class, DesignRiskLinter.class)
-    -{static} NON_CLASS_FILE_LINTER_TYPES: List<Class<? extends Linter>> = List.of(SnakeLinter.class, UnusedImportLinter.class, TrailingWhitespaceLinter.class, LeastKnowledgePrincipleLinter.class)
-    -availableLinters: List<Linter>
-    -fileLoader: FileLoader
-    -configLoader: ConfigLoader
-    -scanner: Scanner
-    --
-    +LinterMain()
-    +{static} main(args: String[]): void
-    +loadLinters(config: LinterConfig): void
-    +run(): void
-    -addIfEnabled(linter: Linter, linterType: Class<? extends Linter>, config: LinterConfig): void
-    -askForFileInput(): String
-    -displayResult(result: String): void
-    -expandInputFiles(requestedPaths: List<File>): List<File>
-    -collectFiles(path: File, files: List<File>, seenPaths: Set<String>): void
-    -splitFilesByType(files: List<File>, classFiles: List<File>, nonClassFiles: List<File>): void
-    -isClassFile(file: File): boolean
-    -runLintBatches(classFiles: List<File>, nonClassFiles: List<File>): String
-    -selectLinters(linterTypes: List<Class<? extends Linter>>): List<Linter>
-    -runLinters(linters: List<Linter>, files: List<File>): String
-  }
+class LinterFactory {
+  +createLinters(config: LinterConfig): List<Linter>
+  -addIfEnabled(linters: List<Linter>, linter: Linter, linterType: Class<? extends Linter>, config: LinterConfig): void
+}
+
+class LinterMain {
+  -{static} DEFAULT_CONFIG_PATH: String = "linter.properties"
+  -availableLinters: List<Linter>
+  -fileLoader: FileLoader
+  -configLoader: ConfigLoader
+  -scanner: Scanner
+  -linterFactory: LinterFactory
+  -linterRunner: LinterRunner
+  --
+  +LinterMain()
+  +{static} main(args: String[]): void
+  +run(): void
+  -askForFileInput(): String
+  -displayResult(result: String): void
+}
+
+class LinterRunner {
+  -{static} CLASS_FILE_LINTER_TYPES: List<Class<? extends Linter>> = List.of(SRPLinter.class, FacadePatternLinter.class, StrategyPatternLinter.class, SingletonPatternLinter.class, DecoratorPatternLinter.class, AdapterPatternLinter.class, BooleanFlagMethodLinter.class, PublicNonFinalFieldLinter.class, TooManyParametersLinter.class, PlantUMLGenerator.class, DesignRiskLinter.class)
+  -{static} NON_CLASS_FILE_LINTER_TYPES: List<Class<? extends Linter>> = List.of(SnakeLinter.class, UnusedImportLinter.class, TrailingWhitespaceLinter.class)
+  --
+  +run(files: List<File>, availableLinters: List<Linter>): String
+  -splitFilesByType(files: List<File>, classFiles: List<File>, nonClassFiles: List<File>): void
+  -isClassFile(file: File): boolean
+  -runLintBatches(classFiles: List<File>, nonClassFiles: List<File>, availableLinters: List<Linter>): String
+  -selectLinters(linterTypes: List<Class<? extends Linter>>, availableLinters: List<Linter>): List<Linter>
+  -runLinters(linters: List<Linter>, files: List<File>): String
+}
 }
 
 ConfigLoader .u.> LinterConfig
@@ -381,9 +391,12 @@ TooManyParametersLinter --|> AbstractASMLinter
 TooManyParametersLinter .d.> ASMReader
 TrailingWhitespaceLinter .u.|> Linter
 UnusedImportLinter --|> AbstractSourceLinter
-LinterMain o-d- Linter
-LinterMain *-d- FileLoader
-LinterMain *-d- ConfigLoader
-LinterMain .d.> LinterConfig
+LinterFactory ..> LinterConfig
+LinterFactory ..> Linter
+LinterMain o-- Linter
+LinterMain *-- FileLoader
+LinterMain *-- ConfigLoader
+LinterMain *-- LinterFactory
+LinterMain *-- LinterRunner
 
 @enduml
