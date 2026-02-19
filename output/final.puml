@@ -353,50 +353,70 @@ class LinterRunner {
   -runLinters(linters: List<Linter>, files: List<File>): String
 }
 }
+ConfigLoader ..> LinterConfig
 
-ConfigLoader .u.> LinterConfig
-AbstractASMLinter .u.|> Linter
-AbstractASMLinter *-d- ASMReader
-AbstractSourceLinter .u.|> Linter
-AdapterPatternLinter -u-|> AbstractASMLinter
-AdapterPatternLinter .u.> AdapterCandidate
-AdapterPatternLinter .d.> ASMReader
-BooleanFlagMethodLinter .u.|> Linter
-BooleanFlagMethodLinter *-d- ASMReader
+AbstractASMLinter ..|> Linter
+AbstractASMLinter .d.> ASMReader
+
+AbstractSourceLinter ..|> Linter
+
+AdapterPatternLinter --|> AbstractASMLinter
+AdapterPatternLinter ..> AdapterCandidate
+AdapterPatternLinter ..> ASMReader
+
+BooleanFlagMethodLinter ..|> Linter
+BooleanFlagMethodLinter ..> ASMReader
+
 DecoratorPatternLinter --|> AbstractASMLinter
-DecoratorPatternLinter .d.> ASMReader
-DesignRiskLinter -d-|> AbstractASMLinter
-DesignRiskLinter *-d- LCOMCalculator
-DesignRiskLinter .d.> ASMReader
-FacadePatternLinter -d-|> AbstractASMLinter
+DecoratorPatternLinter ..> ASMReader
+
+DesignRiskLinter --|> AbstractASMLinter
+DesignRiskLinter ..> LCOMCalculator
+DesignRiskLinter ..> ASMReader
+
+FacadePatternLinter --|> AbstractASMLinter
 FacadePatternLinter ..> FacadeCandidate
-FacadePatternLinter .d.> ASMReader
+FacadePatternLinter ..> ASMReader
+
 LCOMCalculator ..> LCOMResult
-LeastKnowledgePrincipleLinter .u.|> Linter
-PlantUMLGenerator .u.|> Linter
-PlantUMLGenerator *-d- ASMReader
+
+LeastKnowledgePrincipleLinter ..|> Linter
+
+PlantUMLGenerator ..|> Linter
+PlantUMLGenerator ..> ASMReader
+
 PublicNonFinalFieldLinter --|> AbstractASMLinter
-PublicNonFinalFieldLinter .d.> ASMReader
-SingletonPatternLinter -d-|> AbstractASMLinter
-SingletonPatternLinter .d.> ASMReader
-SnakeLinter -d-|> AbstractSourceLinter
-SRPLinter -d-|> AbstractASMLinter
-SRPLinter *-d- LCOMCalculator
-SRPLinter .d.> LCOMResult
-SRPLinter .d.> ASMReader
-StrategyPatternLinter -d-|> AbstractASMLinter
+PublicNonFinalFieldLinter ..> ASMReader
+
+SingletonPatternLinter --|> AbstractASMLinter
+SingletonPatternLinter ..> ASMReader
+
+SnakeLinter --|> AbstractSourceLinter
+
+SRPLinter --|> AbstractASMLinter
+SRPLinter ..> LCOMCalculator
+SRPLinter ..> LCOMResult
+SRPLinter ..> ASMReader
+
+StrategyPatternLinter --|> AbstractASMLinter
 StrategyPatternLinter ..> StrategyCandidate
-StrategyPatternLinter .d.> ASMReader
+StrategyPatternLinter ..> ASMReader
+
 TooManyParametersLinter --|> AbstractASMLinter
-TooManyParametersLinter .d.> ASMReader
-TrailingWhitespaceLinter .u.|> Linter
+TooManyParametersLinter ..> ASMReader
+
+TrailingWhitespaceLinter ..|> Linter
+
 UnusedImportLinter --|> AbstractSourceLinter
+
 LinterFactory ..> LinterConfig
 LinterFactory ..> Linter
+
 LinterMain o-- Linter
-LinterMain *-- FileLoader
-LinterMain *-- ConfigLoader
-LinterMain *-- LinterFactory
-LinterMain *-- LinterRunner
+LinterMain ..> FileLoader
+LinterMain ..> ConfigLoader
+LinterMain ..> LinterFactory
+LinterMain ..> LinterRunner
+
 
 @enduml
