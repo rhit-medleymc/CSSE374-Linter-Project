@@ -30,29 +30,29 @@ package domain{
     #getViolationsMessage(violationCount: int, result: StringBuilder): String
   }
 
-  class PublicNonFinalFieldLinter extends AbstractASMLinter{
-    #lintClass(classNode: ClassNode, allClasses: List<ClassNode>, result: StringBuilder): int
-    #getNoViolationsMessage(): String
-    #getViolationsMessage(violationCount: int, result: StringBuilder): String
-  }
 
   class ExampleLinter2 {
     +lint(files: List<File>): String
   }
-
-  class TooManyParametersLinter extends AbstractASMLinter{
-    #lintClass(classNode: ClassNode, allClasses: List<ClassNode>, result: StringBuilder): int
-    -isSkippableMethod(method: MethodNode): boolean
-    #getNoViolationsMessage(): String
-    #getViolationsMessage(violationCount: int, result: StringBuilder): String
+  
+  class PublicNonFinalFieldLinter {
+    +lintClass(classNode: ClassNode, allClasses: List<ClassNode>, result: StringBuilder): int
+    getNoViolationsMessage(): String
+    getViolationsMessage(violationCount: int, result: StringBuilder): String
   }
-  class SingletonPatternLinter extends AbstractASMLinter{
-    #lintClass(classNode: ClassNode, allClasses: List<ClassNode>, result: StringBuilder): int
-    -hasPrivateConstructors(classNode: ClassNode): boolean
-    -findSingletonField(classNode: ClassNode): FieldNode
-    -hasPublicStaticAccessor(classNode: ClassNode, singletonField: FieldNode): boolean
-    #getNoViolationsMessage(): String
-    #getViolationsMessage(violationCount: int, result: StringBuilder): String
+  class TooManyParametersLinter  {
+    +lintClass(classNode: ClassNode, allClasses: List<ClassNode>, result: StringBuilder): int
+    isSkippableMethod(method: MethodNode): boolean
+    getNoViolationsMessage(): String
+    getViolationsMessage(violationCount: int, result: StringBuilder): String
+  }
+  class SingletonPatternLinter {
+    +lintClass(classNode: ClassNode, allClasses: List<ClassNode>, result: StringBuilder): int
+    hasPrivateConstructors(classNode: ClassNode): boolean
+    findSingletonField(classNode: ClassNode): FieldNode
+    hasPublicStaticAccessor(classNode: ClassNode, singletonField: FieldNode): boolean
+    getNoViolationsMessage(): String
+    getViolationsMessage(violationCount: int, result: StringBuilder): String
   }
   class LinterConfig {
     +getTooManyParametersLimit(): int
@@ -88,18 +88,8 @@ TooManyParametersLinter --|> AbstractASMLinter
 LinterMain o-- Linter
 LinterMain *-- FileLoader
 LinterMain *-- ConfigLoader
+ConfigLoader ..> LinterConfig
+LinterMain ..> LinterConfig
 PublicNonFinalFieldLinter --|> AbstractASMLinter
 SingletonPatternLinter --|> AbstractASMLinter
 @enduml
-
-
-
-
-
-
-
-
-
-
-
-
